@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "chivon": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter the webapp name"
+            }
+        },
+        "chivon service plan": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter the app service name"
+            }
+        },
+        "storage-account": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter the storage name"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('chivon')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2020-12-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/appServicePlan1')]": "Resource",
+                "displayName": "[parameters('chivon')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('chivon service plan'))]"
+            ],
+            "properties": {
+                "name": "[parameters('chivon')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('chivon service plan'))]"
+            }
+        },
+        {
+            "name": "[parameters('chivon service plan')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2020-12-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "F1",
+                "capacity": 1
+            },
+            "tags": {
+                "displayName": "[parameters('chivon service plan')]"
+            },
+            "properties": {
+                "name": "[parameters('chivon service plan')]"
+            }
+        },
+        {
+            "name": "[parameters('storage-account')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "tags": {
+                "displayName": "[parameters('storage-account')]"
+            },
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            }
+        }
+    ],
+    "outputs": {}
+}
